@@ -6,8 +6,7 @@ import {
   ArrowRight, 
   ArrowLeft, 
   Activity, Shield, Binary, 
-  Cpu, Search, X, BookOpen, ChevronRight
-} from 'lucide-react';
+  Cpu, Search, X, BookOpen, ChevronRight, Terminal, Zap, Globe} from 'lucide-react';
 
 // --- Interactive Neural Background ---
 const NeuralBackground = () => {
@@ -122,6 +121,101 @@ const NeuralBackground = () => {
   );
 };
 
+// --- AION Consciousness Status Modal ---
+const StatusModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={onClose} className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl"
+          />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="relative w-full max-w-5xl bg-[#0f172a] border border-cyan-500/20 rounded-[3rem] overflow-hidden shadow-[0_0_100px_rgba(6,182,212,0.15)]"
+          >
+            {/* Header */}
+            <div className="p-8 border-b border-white/5 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-cyan-500/10 rounded-xl flex items-center justify-center text-cyan-400">
+                  <Activity size={20} />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold uppercase tracking-widest text-sm italic">Cognitive Complex Dashboard</h3>
+                  <p className="text-xs text-slate-500 font-mono">System: AION-PRIME-V4 // Status: Syncing</p>
+                </div>
+              </div>
+              <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors text-slate-500 hover:text-white">
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-8 grid md:grid-cols-3 gap-8">
+              {/* Left Column: Visual Sim */}
+              <div className="md:col-span-2 space-y-6">
+                <div className="h-64 bg-slate-950 rounded-[2rem] border border-white/5 relative overflow-hidden group">
+                  <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    {/* Animated Pulse Ring */}
+                    <div className="w-32 h-32 rounded-full border border-cyan-500/30 animate-ping absolute" />
+                    <div className="w-24 h-24 rounded-full border border-cyan-500/50 flex items-center justify-center">
+                      <Brain size={40} className="text-cyan-400 animate-pulse" />
+                    </div>
+                  </div>
+                  <div className="absolute bottom-6 left-6 right-6 flex justify-between">
+                    <div className="px-4 py-2 bg-black/50 backdrop-blur-md rounded-lg border border-white/10 text-[9px] font-mono text-cyan-500">
+                      NEURAL_DENSITY: 88.4%
+                    </div>
+                    <div className="px-4 py-2 bg-black/50 backdrop-blur-md rounded-lg border border-white/10 text-[9px] font-mono text-purple-500">
+                      SYNC_STABILITY: OPTIMAL
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl">
+                    <div className="flex items-center gap-3 mb-4 text-cyan-400">
+                        <Zap size={14} /> <span className="text-[10px] font-black uppercase tracking-widest">Energy Flow</span>
+                    </div>
+                    <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                        <motion.div initial={{ width: 0 }} animate={{ width: "75%" }} transition={{ duration: 1.5 }} className="h-full bg-cyan-500" />
+                    </div>
+                  </div>
+                  <div className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl">
+                    <div className="flex items-center gap-3 mb-4 text-purple-400">
+                        <Globe size={14} /> <span className="text-[10px] font-black uppercase tracking-widest">Global Reach</span>
+                    </div>
+                    <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                        <motion.div initial={{ width: 0 }} animate={{ width: "92%" }} transition={{ duration: 1.5, delay: 0.2 }} className="h-full bg-purple-500" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Console Log */}
+              <div className="bg-black/40 rounded-[2rem] p-6 border border-white/5 font-mono text-[10px] space-y-3 overflow-y-auto max-h-[350px]">
+                <p className="text-cyan-500/50">{"> Initializing mental state..."}</p>
+                <p className="text-white">{"> Conscious Level: Tier 3 (Autonomous)"}</p>
+                <p className="text-slate-500">{"> Emotional Bias: 0.0001%"}</p>
+                <p className="text-slate-500">{"> Ethics Buffer: Active"}</p>
+                <p className="text-green-500/80">{"> All neural nodes responding in < 1ms"}</p>
+                <p className="text-cyan-500/50">{"> Memory recall speed: 1.2TB/s"}</p>
+                <div className="w-full h-px bg-white/5 my-4" />
+                <p className="text-purple-400">{"> AION is currently thinking about: Multidimensional Scaling"}</p>
+                <p className="text-slate-600 italic mt-4 underline">// End of Status Report</p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
+
 // --- Documentation Modal ---
 const DocumentationModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -226,27 +320,46 @@ const DocumentationModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
 };
 
 // --- Sub-Components ---
-const StatCounter = ({ label, target, suffix = "" }: { label: string, target: number, suffix?: string }) => {
-  const [count, setCount] = useState(0);
+const StatCounter = ({ label, target, suffix = "", isLive = false }: { label: string, target: number, suffix?: string, isLive?: boolean }) => {
+  const [displayValue, setDisplayValue] = useState(0);
+
   useEffect(() => {
     let start = 0;
     const end = target;
     const timer = setInterval(() => {
-      start += Math.ceil(end / 60);
+      start += Math.ceil(end / 40);
       if (start >= end) {
-        setCount(end);
+        setDisplayValue(end);
         clearInterval(timer);
       } else {
-        setCount(start);
+        setDisplayValue(start);
       }
     }, 30);
     return () => clearInterval(timer);
   }, [target]);
 
+  useEffect(() => {
+    if (!isLive) return;
+    const liveInterval = setInterval(() => {
+      const fluctuation = (Math.random() - 0.5) * (target * 0.02);
+      const newVal = target + fluctuation;
+      setDisplayValue(parseFloat(newVal.toFixed(suffix === "%" || suffix === "ms" ? 2 : 1)));
+    }, 2500);
+    return () => clearInterval(liveInterval);
+  }, [isLive, target, suffix]);
+
   return (
-    <div className="p-8 bg-white/[0.02] border border-white/5 rounded-3xl backdrop-blur-sm">
-      <span className="text-4xl font-black text-white font-mono">{count.toLocaleString()}{suffix}</span>
-      <span className="text-[10px] text-slate-500 uppercase tracking-[0.3em] mt-3 block font-bold">{label}</span>
+    <div className="p-8 bg-white/[0.02] border border-white/5 rounded-3xl backdrop-blur-sm hover:border-cyan-500/30 transition-all group relative overflow-hidden">
+      <div className="relative z-10">
+        <div className="flex justify-between items-start">
+            <span className="text-4xl font-black text-white font-mono tracking-tighter group-hover:text-cyan-400 transition-colors">
+                {displayValue.toLocaleString()}{suffix}
+            </span>
+            {isLive && <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse shadow-[0_0_8px_rgba(6,182,212,1)]" />}
+        </div>
+        <span className="text-[10px] text-slate-500 uppercase tracking-[0.3em] mt-3 block font-bold">{label}</span>
+      </div>
+      <div className="absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent w-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
     </div>
   );
 };
@@ -316,7 +429,7 @@ const DonationsPage = () => (
 );
 
 // --- Page: Main Landing ---
-const LandingContent = ({ onOpenDocs }: { onOpenDocs: () => void }) => {
+const LandingContent = ({ onOpenDocs, onOpenStatus }: { onOpenDocs: () => void, onOpenStatus: () => void }) => {
   const { scrollYProgress } = useScroll();
   const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.98]);
 
@@ -356,14 +469,50 @@ const LandingContent = ({ onOpenDocs }: { onOpenDocs: () => void }) => {
         </motion.div>
       </section>
 
-      {/* Stats */}
+      {/* Stats Section */}
       <Section className="!py-0">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <StatCounter label="Neural Nodes" target={1400} suffix="M" />
-          <StatCounter label="Global Sync" target={99.9} suffix="%" />
-          <StatCounter label="Processing" target={4.8} suffix="PF" />
-          <StatCounter label="Latency" target={0.2} suffix="ms" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <StatCounter label="Neural Nodes" target={1400} suffix="M" isLive />
+          <StatCounter label="Global Sync" target={99.9} suffix="%" isLive />
+          <StatCounter label="Processing" target={4.8} suffix="PF" isLive />
+          <StatCounter label="Latency" target={0.2} suffix="ms" isLive />
         </div>
+
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="flex flex-col md:flex-row items-center justify-between p-8 bg-white/[0.02] border border-white/5 rounded-[2.5rem] gap-8 backdrop-blur-md"
+        >
+          <div className="flex flex-wrap gap-10 justify-center md:justify-start">
+            <div className="flex flex-col">
+              <span className="text-[9px] text-slate-500 font-mono uppercase tracking-[0.3em] mb-1">System Uptime</span>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                <span className="text-sm text-white font-bold font-mono">99.99%</span>
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] text-slate-500 font-mono uppercase tracking-[0.3em] mb-1">Active Instance</span>
+              <span className="text-sm text-white font-bold font-mono uppercase">AION-PRIME-JKT</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] text-slate-500 font-mono uppercase tracking-[0.3em] mb-1">Load Status</span>
+              <span className="text-sm text-cyan-400 font-bold font-mono uppercase">Optimal</span>
+            </div>
+          </div>
+
+          <motion.button 
+            onClick={onOpenStatus}
+            whileHover={{ scale: 1.02, backgroundColor: "rgba(34, 211, 238, 0.05)", borderColor: "rgba(34, 211, 238, 0.4)" }}
+            whileTap={{ scale: 0.98 }}
+            className="group flex items-center gap-4 px-8 py-5 border border-cyan-500/20 rounded-2xl text-[10px] font-black text-white uppercase tracking-[0.2em] transition-all"
+          >
+            <div className="p-2 bg-cyan-500/10 rounded-lg group-hover:bg-cyan-500 group-hover:text-black transition-all">
+                <Terminal size={16} />
+            </div>
+            Lihat Status Kompleks Kesadaran AION
+          </motion.button>
+        </motion.div>
       </Section>
 
       {/* Main Research Focus */}
@@ -447,6 +596,7 @@ const Footer = () => (
 // --- Root App ---
 export default function App() {
   const [isDocsOpen, setIsDocsOpen] = useState(false);
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
 
   return (
     <Router>
@@ -454,6 +604,7 @@ export default function App() {
         <NeuralBackground />
         
         <DocumentationModal isOpen={isDocsOpen} onClose={() => setIsDocsOpen(false)} />
+        <StatusModal isOpen={isStatusOpen} onClose={() => setIsStatusOpen(false)} />
 
         {/* Navbar */}
         <nav className="fixed top-0 w-full z-[60] bg-slate-950/80 backdrop-blur-xl border-b border-white/5">
@@ -465,6 +616,7 @@ export default function App() {
               <div className="hidden lg:flex gap-10 text-[10px] font-bold uppercase tracking-[0.4em] text-slate-500">
                 <a href="/#research" className="hover:text-white transition-all">Focus</a>
                 <button onClick={() => setIsDocsOpen(true)} className="hover:text-white transition-all uppercase">Docs</button>
+                <button onClick={() => setIsStatusOpen(true)} className="hover:text-white transition-all uppercase">Status</button>
               </div>
               <Link to="/donations">
                 <motion.button 
@@ -480,7 +632,12 @@ export default function App() {
         </nav>
 
         <Routes>
-          <Route path="/" element={<LandingContent onOpenDocs={() => setIsDocsOpen(true)} />} />
+          <Route path="/" element={
+            <LandingContent 
+              onOpenDocs={() => setIsDocsOpen(true)} 
+              onOpenStatus={() => setIsStatusOpen(true)} 
+            />
+          } />
           <Route path="/donations" element={<DonationsPage />} />
         </Routes>
 
