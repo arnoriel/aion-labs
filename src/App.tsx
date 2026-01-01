@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence, useDragControls } from 'framer-motion';
 import { 
   Brain, Layers, 
   ArrowRight, 
@@ -123,6 +123,32 @@ const NeuralBackground = () => {
 
 // --- AION Consciousness Status Modal ---
 const StatusModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+  const [, setBpm] = useState(75); // Simulated BPM
+  const [, setCortisol] = useState(20); // Simulated Cortisol %
+  const [colorClass, setColorClass] = useState('text-green-400');
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newBpm = Math.floor(Math.random() * (180 - 30 + 1)) + 30; // Random BPM in 30-180
+      const newCortisol = Math.floor(Math.random() * 101); // 0-100%
+      setBpm(newBpm);
+      setCortisol(newCortisol);
+
+      // Validate color based on formula
+      if (newCortisol > 60 || newBpm > 120) {
+        setColorClass('text-red-500');
+      } else if (newBpm >= 91 && newBpm <= 120) {
+        setColorClass('text-yellow-500');
+      } else if (newBpm >= 60 && newBpm <= 90) {
+        setColorClass('text-green-400');
+      } else {
+        setColorClass('text-blue-400'); // Default normal
+      }
+    }, 3000); // Update every 3 seconds for realtime feel
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -163,7 +189,7 @@ const StatusModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void
                     {/* Animated Pulse Ring */}
                     <div className="w-32 h-32 rounded-full border border-cyan-500/30 animate-ping absolute" />
                     <div className="w-24 h-24 rounded-full border border-cyan-500/50 flex items-center justify-center">
-                      <Brain size={40} className="text-cyan-400 animate-pulse" />
+                      <Activity size={40} className={`${colorClass} animate-pulse`} /> {/* Changed to EKG/ECG icon with dynamic color */}
                     </div>
                   </div>
                   <div className="absolute bottom-6 left-6 right-6 flex justify-between">
@@ -319,6 +345,41 @@ const DocumentationModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
   );
 };
 
+// --- Research Detail Modal ---
+const ResearchModal = ({ isOpen, onClose, title, details }: { isOpen: boolean, onClose: () => void, title: string, details: string[] }) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={onClose} className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl"
+          />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="relative w-full max-w-3xl bg-[#0f172a] border border-cyan-500/20 rounded-[3rem] overflow-hidden shadow-[0_0_100px_rgba(6,182,212,0.15)] p-8"
+          >
+            <button onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-white/5 rounded-full transition-colors text-slate-500 hover:text-white">
+              <X size={24} />
+            </button>
+            <h3 className="text-3xl font-bold text-white mb-6 italic tracking-tight uppercase">{title}</h3>
+            <ul className="space-y-4">
+              {details.map((item, i) => (
+                <li key={i} className="text-slate-400 text-base flex items-start gap-3">
+                  <div className="w-2 h-2 rounded-full bg-cyan-500 mt-2 shrink-0 shadow-[0_0_8px_cyan]" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
+
 // --- Sub-Components ---
 const StatCounter = ({ label, target, suffix = "", isLive = false }: { label: string, target: number, suffix?: string, isLive?: boolean }) => {
   const [displayValue, setDisplayValue] = useState(0);
@@ -370,12 +431,13 @@ const Section = ({ children, className = "", id }: { children: React.ReactNode, 
   </section>
 );
 
-const FeatureCard = ({ title, icon: Icon, items, delay = 0 }: { title: string, icon: any, items: string[], delay?: number }) => (
+const FeatureCard = ({ title, icon: Icon, items, delay = 0, onClick }: { title: string, icon: any, items: string[], delay?: number, onClick: () => void }) => (
   <motion.div 
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
     transition={{ delay }}
-    className="bg-slate-900/40 border border-white/5 p-10 rounded-[2.5rem] backdrop-blur-xl hover:border-cyan-500/30 transition-all group"
+    onClick={onClick}
+    className="bg-slate-900/40 border border-white/5 p-10 rounded-[2.5rem] backdrop-blur-xl hover:border-cyan-500/30 transition-all group cursor-pointer"
   >
     <div className="w-16 h-16 bg-cyan-500/10 rounded-2xl flex items-center justify-center text-cyan-400 mb-8 border border-cyan-500/20 group-hover:scale-110 transition-transform">
       <Icon size={30} />
@@ -393,45 +455,94 @@ const FeatureCard = ({ title, icon: Icon, items, delay = 0 }: { title: string, i
 );
 
 // --- Page: Donations ---
-const DonationsPage = () => (
-  <div className="min-h-screen pt-40 pb-20 relative px-6">
-    <div className="max-w-5xl mx-auto">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <Link to="/" className="inline-flex items-center gap-2 text-slate-500 hover:text-cyan-400 mb-12 transition-all font-mono text-xs tracking-widest uppercase">
-          <ArrowLeft size={14} /> Laboratory Core
-        </Link>
-        <div className="grid lg:grid-cols-2 gap-20 items-center">
-          <div>
-            <h1 className="text-6xl md:text-8xl font-black text-white mb-8 tracking-tighter italic uppercase leading-none">
-              Fuel the <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">Future.</span>
-            </h1>
-            <p className="text-slate-400 text-lg mb-8 leading-relaxed">Dukungan Anda memungkinkan riset independen kami tetap transparan dan bebas dari bias korporasi.</p>
-            <div className="space-y-4">
-              {['Server Infrastructure', 'Safety Audit', 'Open Source Dev'].map((t) => (
-                <div key={t} className="flex items-center gap-3 text-sm font-mono text-cyan-400/80">
-                  <ChevronRight size={14} /> {t}
+const DonationsPage = () => {
+  const target = 1700000000; // Rp 1.7 Miliar
+  const current = 850000000; // Simulated current funding (50%)
+  const progress = (current / target) * 100;
+
+  return (
+    <div className="min-h-screen pt-40 pb-20 relative px-6">
+      <div className="max-w-5xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <Link to="/" className="inline-flex items-center gap-2 text-slate-500 hover:text-cyan-400 mb-12 transition-all font-mono text-xs tracking-widest uppercase">
+            <ArrowLeft size={14} /> Laboratory Core
+          </Link>
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
+            <div>
+              <h1 className="text-6xl md:text-8xl font-black text-white mb-8 tracking-tighter italic uppercase leading-none">
+                Fuel the <br/>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">Future.</span>
+              </h1>
+              <p className="text-slate-400 text-lg mb-8 leading-relaxed">Dukungan Anda memungkinkan riset independen kami tetap transparan dan bebas dari bias korporasi. Kami membuka kesempatan donasi terbuka untuk mendukung pengembangan AION, termasuk infrastruktur server, audit keamanan, dan pengembangan open-source.</p>
+              <div className="space-y-4 mb-8">
+                {['Server Infrastructure', 'Safety Audit', 'Open Source Dev'].map((t) => (
+                  <div key={t} className="flex items-center gap-3 text-sm font-mono text-cyan-400/80">
+                    <ChevronRight size={14} /> {t}
+                  </div>
+                ))}
+              </div>
+              {/* Progress Bar */}
+              <div className="space-y-4">
+                <div className="flex justify-between text-sm text-slate-400">
+                  <span>Target: Rp {target.toLocaleString()}</span>
+                  <span>Current: Rp {current.toLocaleString()} ({progress.toFixed(2)}%)</span>
                 </div>
-              ))}
+                <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }} 
+                    animate={{ width: `${progress}%` }} 
+                    transition={{ duration: 1.5 }} 
+                    className="h-full bg-gradient-to-r from-cyan-500 to-purple-500" 
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="relative group">
+              <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-[3rem] blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+              <div className="relative bg-white p-12 rounded-[3rem] flex flex-col items-center">
+                <div className="relative">
+                  {/* Animated Light Ring */}
+                  <motion.div 
+                    className="absolute inset-[-20px] border-2 border-cyan-500/50 rounded-full"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                  />
+                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=AION-LABS-FUND" alt="QR" className="w-full max-w-[220px] mb-6" />
+                </div>
+                <p className="text-slate-900 font-black tracking-widest text-xs uppercase">Scan to Donate</p>
+              </div>
             </div>
           </div>
-          <div className="relative group">
-            <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-[3rem] blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-            <div className="relative bg-white p-12 rounded-[3rem] flex flex-col items-center">
-              <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=AION-LABS-FUND" alt="QR" className="w-full max-w-[220px] mb-6" />
-              <p className="text-slate-900 font-black tracking-widest text-xs uppercase">Scan to Donate</p>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // --- Page: Main Landing ---
 const LandingContent = ({ onOpenDocs, onOpenStatus }: { onOpenDocs: () => void, onOpenStatus: () => void }) => {
   const { scrollYProgress } = useScroll();
   const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.98]);
+
+  // For Research Carousel
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedResearch, setSelectedResearch] = useState<{ title: string, details: string[] } | null>(null);
+
+  const researchItems = [
+    { title: "Artificial Mind", icon: Brain, items: ["Sistem memori jangka panjang.", "Logika pengambilan keputusan.", "Empati buatan modular."], details: ["Detail singkat: Fokus pada pengembangan memori adaptif.", "Integrasi dengan sistem emosi simulasi.", "Modular untuk skalabilitas."] },
+    { title: "Multi-AGI Sync", icon: Layers, items: ["Integrasi lintas platform.", "Keamanan data terdesentralisasi.", "Protokol sinkronisasi cepat."], details: ["Detail singkat: Sinkronisasi real-time antar AGI.", "Desentralisasi untuk keamanan.", "Protokol cepat dengan latensi rendah."] },
+    { title: "Ethics Core", icon: Shield, items: ["Audit keamanan otomatis.", "Standar etika AI global.", "Perlindungan privasi mutlak."], details: ["Detail singkat: Etika built-in.", "Audit otomatis setiap siklus.", "Privasi end-to-end."] }
+  ];
+
+  const dragControls = useDragControls();
+
+  const handleDragEnd = (_event: any, info: any) => {
+    if (info.offset.x < -100 && currentIndex < researchItems.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else if (info.offset.x > 100 && currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
 
   return (
     <motion.div style={{ scale }}>
@@ -524,10 +635,36 @@ const LandingContent = ({ onOpenDocs, onOpenStatus }: { onOpenDocs: () => void, 
           </div>
           <p className="text-slate-500 max-w-sm text-sm font-mono">// Pengembangan teknologi kognitif tingkat lanjut melalui tiga pilar fundamental.</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-8">
-          <FeatureCard title="Artificial Mind" icon={Brain} items={["Sistem memori jangka panjang.", "Logika pengambilan keputusan.", "Empati buatan modular."]} />
-          <FeatureCard title="Multi-AGI Sync" icon={Layers} delay={0.1} items={["Integrasi lintas platform.", "Keamanan data terdesentralisasi.", "Protokol sinkronisasi cepat."]} />
-          <FeatureCard title="Ethics Core" icon={Shield} delay={0.2} items={["Audit keamanan otomatis.", "Standar etika AI global.", "Perlindungan privasi mutlak."]} />
+        {/* Carousel */}
+        <div className="relative overflow-hidden">
+          <motion.div 
+            className="flex cursor-grab active:cursor-grabbing"
+            drag="x"
+            dragControls={dragControls}
+            dragConstraints={{ left: -(researchItems.length - 1) * (window.innerWidth > 768 ? 400 : 300), right: 0 }}
+            dragElastic={0.2}
+            onDragEnd={handleDragEnd}
+            animate={{ x: -currentIndex * (window.innerWidth > 768 ? 400 : 300) }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          >
+            {researchItems.map((item, i) => (
+              <div key={i} className="min-w-[300px] md:min-w-[400px] px-2">
+                <FeatureCard 
+                  {...item} 
+                  onClick={() => setSelectedResearch({ title: item.title, details: item.details })} 
+                />
+              </div>
+            ))}
+          </motion.div>
+          {/* Navigation Buttons */}
+          <div className="flex justify-center gap-4 mt-8">
+            <button onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))} className="p-2 bg-white/5 rounded-full">
+              <ArrowLeft size={20} className="text-white" />
+            </button>
+            <button onClick={() => setCurrentIndex(Math.min(researchItems.length - 1, currentIndex + 1))} className="p-2 bg-white/5 rounded-full">
+              <ArrowRight size={20} className="text-white" />
+            </button>
+          </div>
         </div>
       </Section>
 
@@ -569,6 +706,14 @@ const LandingContent = ({ onOpenDocs, onOpenStatus }: { onOpenDocs: () => void, 
           </div>
         </div>
       </Section>
+
+      {/* Research Modal */}
+      <ResearchModal 
+        isOpen={!!selectedResearch} 
+        onClose={() => setSelectedResearch(null)} 
+        title={selectedResearch?.title || ''} 
+        details={selectedResearch?.details || []} 
+      />
     </motion.div>
   );
 };
@@ -597,6 +742,20 @@ const Footer = () => (
 export default function App() {
   const [isDocsOpen, setIsDocsOpen] = useState(false);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const [runtime, setRuntime] = useState('00:00:00');
+  const startTime = useRef(Date.now());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime.current;
+      const hours = Math.floor(elapsed / 3600000).toString().padStart(2, '0');
+      const minutes = Math.floor((elapsed % 3600000) / 60000).toString().padStart(2, '0');
+      const seconds = Math.floor((elapsed % 60000) / 1000).toString().padStart(2, '0');
+      setRuntime(`${hours}:${minutes}:${seconds}`);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Router>
@@ -610,7 +769,14 @@ export default function App() {
         <nav className="fixed top-0 w-full z-[60] bg-slate-950/80 backdrop-blur-xl border-b border-white/5">
           <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
             <Link to="/" className="text-3xl font-black tracking-tighter text-white flex items-center gap-3 italic">
-              <div className="w-2 h-2 bg-cyan-500 rotate-45" /> AION
+              <div className="w-2 h-2 bg-cyan-500 rotate-45" /> 
+              <motion.span
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                AION
+              </motion.span> 
+              <span className="text-xs text-cyan-400 font-mono">[LIVE] T+ {runtime}</span>
             </Link>
             <div className="flex items-center gap-12">
               <div className="hidden lg:flex gap-10 text-[10px] font-bold uppercase tracking-[0.4em] text-slate-500">
