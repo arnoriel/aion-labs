@@ -657,7 +657,7 @@ const LandingContent = ({ onOpenDocs, onOpenStatus }: { onOpenDocs: () => void, 
             ))}
           </motion.div>
           {/* Navigation Buttons */}
-          <div className="flex justify-center gap-4 mt-8">
+          <div className="flex justify-center gap-4 mt-8 md:hidden">
             <button onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))} className="p-2 bg-white/5 rounded-full">
               <ArrowLeft size={20} className="text-white" />
             </button>
